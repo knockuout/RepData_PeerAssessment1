@@ -140,7 +140,29 @@ The **median** total number of steps taken per day is `r stepsMedian`.
 
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
+```{r}
+actdata$interval <- as.factor(as.character(actdata$interval))
+intervalMean <- as.numeric(tapply(actdata$steps, actdata$interval, mean, na.rm=TRUE))
+intervals <- data.frame(intervals = as.numeric(levels(actdata$interval)), intervalMean)
+intervals <- intervals[order(intervals$intervals), ]
+
+
+plot(intervals$intervals, intervals$intervalMean, type = "l", 
+     main = "Average 5-min step inverval", 
+     ylab = "Average steps", xlab = "Time of Day" )
+
+```
+
+
+
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r}
+MaxMeanSteps <- intervals[which.max(intervals$intervalMean), ]
+head(MaxMeanSteps)
+```
+**The 5-min interval is `r MaxMeanSteps$intervals` which has `r round(MaxMeanSteps$intervalMean)` steps.**
+
 
 
 ### Imputing missing values
@@ -151,7 +173,17 @@ bias into some calculations or summaries of the data.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
 
+```{r}
+naVals <- sum(is.na(actdata$steps))
+```
+**Total number of rows with missing values is `r naVals`**
+
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+```{r}
+
+```
+
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
