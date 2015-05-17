@@ -367,4 +367,30 @@ unique(byDayTypeData$date)  #checking the date values
 1. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using **simulated data**:
 
 
+```r
+avgByDayType <- aggregate(steps ~ interval + date, data = byDayTypeData, mean)
+avgByDayType$date <- as.factor(avgByDayType$date)
+head(avgByDayType) #check new df
+```
+
+```
+##   interval    date  steps
+## 1        0 weekday  2.251
+## 2       10 weekday  0.173
+## 3      100 weekday  0.421
+## 4     1000 weekday 37.875
+## 5     1005 weekday 18.220
+## 6     1010 weekday 39.078
+```
+
+```r
+ggplot(avgByDayType, aes(interval, steps)) + geom_line(color = "green", aes(group=date)) +
+    facet_grid(. ~ date) + labs(x="Interval", y="Number of Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
+
+
+
+
 
