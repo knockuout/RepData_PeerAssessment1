@@ -384,7 +384,7 @@ head(avgByDayType) #check new df
 ```
 
 ```r
-ggplot(avgByDayType, aes(interval, steps)) + geom_line(color = "green", aes(group=date)) +
+ggplot(avgByDayType, aes(interval, steps, color=factor(date))) + geom_line(aes(group=date)) +
     facet_grid(. ~ date) + labs(x="Interval", y="Number of Steps")
 ```
 
