@@ -216,14 +216,105 @@ naVals <- sum(is.na(actdata$steps))
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
 
-
-
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+
+```r
+#apply interval mean to na vals
+steps <- vector()
+for (i in 1:dim(actdata)[1]){
+    if (is.na(actdata$steps[i])){
+        steps <- c(steps, intervals$intervalMean[intervals$intervals == actdata$interval[i]])
+    } else {
+        steps <- c(steps, actdata$steps[i])
+    }
+}
+actDataNoNa <- data.frame(steps = steps, date = actdata$date, interval = actdata$interval)
+summary(actDataNoNa)
+```
+
+```
+##      steps          date               interval    
+##  Min.   :  0   Min.   :2012-10-01   0      :   61  
+##  1st Qu.:  0   1st Qu.:2012-10-16   10     :   61  
+##  Median :  0   Median :2012-10-31   100    :   61  
+##  Mean   : 37   Mean   :2012-10-31   1000   :   61  
+##  3rd Qu.: 27   3rd Qu.:2012-11-15   1005   :   61  
+##  Max.   :806   Max.   :2012-11-30   1010   :   61  
+##                                     (Other):17202
+```
+
+```r
+str(actDataNoNa)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
+##  $ interval: Factor w/ 288 levels "0","10","100",..: 1 226 2 73 136 195 198 209 212 223 ...
+```
+
+```r
+head(actDataNoNa)
+```
+
+```
+##    steps       date interval
+## 1 1.7170 2012-10-01        0
+## 2 0.3396 2012-10-01        5
+## 3 0.1321 2012-10-01       10
+## 4 0.1509 2012-10-01       15
+## 5 0.0755 2012-10-01       20
+## 6 2.0943 2012-10-01       25
+```
+
+
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
+**First, we shall calculate total steps per day with imputed data added**
+
+```r
+noNaStepsPerDay <- aggregate(steps ~ date, actDataNoNa, sum)
+colnames(noNaStepsPerDay) <- c("date", "steps")
+head(noNaStepsPerDay)
+```
+
+```
+##         date steps
+## 1 2012-10-01 10766
+## 2 2012-10-02   126
+## 3 2012-10-03 11352
+## 4 2012-10-04 12116
+## 5 2012-10-05 13294
+## 6 2012-10-06 15420
+```
+**Now, lets make that histogram**
+
+```r
+ggplot(noNaStepsPerDay, aes(x = steps)) +
+    geom_histogram(fill = 'cyan', binwidth = 500) +
+    labs(title="Steps Taken per Day", x = "Total daily Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+
+**Then, calculate the mean and median**
+
+```r
+stepsMeanNoNa <- mean(noNaStepsPerDay$steps)
+stepsMedianNoNa <- median(noNaStepsPerDay$steps)
+```
+
+The imputed **mean** total number of steps taken per day is 10766.189. 
+The imputed **median** total number of steps taken per day is 10766.189. 
+
+**After imputing the data we get the same value for mean and median while prior to imputing they were slightly different.** 
 
 ### Are there differences in activity patterns between weekdays and weekends?
+
+
 
 For this part the `weekdays()` function may be of some help here. Use
 the dataset with the filled-in missing values for this part.
