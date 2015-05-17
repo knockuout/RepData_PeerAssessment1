@@ -106,8 +106,7 @@ actdata <- read.csv(unz("activity.zip", "activity.csv"), header = TRUE)
 actdata$steps <- as.numeric(actdata$steps)
 actdata$date <- as.Date(actdata$date, format = "%Y-%m-%d")
 actdata$interval <- as.factor(actdata$interval)
-# test df
-str(actdata)
+str(actdata) #looking at the new DF
 ```
 
 ```
@@ -131,7 +130,7 @@ the dataset.
 ```r
 stepsPerDay <- aggregate(steps ~ date, actdata, sum)
 colnames(stepsPerDay) <- c("date", "steps")
-head(stepsPerDay)
+head(stepsPerDay) #looking at the new DF
 ```
 
 ```
@@ -159,8 +158,8 @@ ggplot(stepsPerDay, aes(x = steps)) +
 stepsMean <- mean(stepsPerDay$steps, na.rm=TRUE)
 stepsMedian <- median(stepsPerDay$steps, na.rm=TRUE)
 ```
-The **mean** total number of steps taken per day is 10766.189. 
-The **median** total number of steps taken per day is 10765.
+The **mean** total number of steps taken per day is **10766.189**. 
+The **median** total number of steps taken per day is **10765**.
 
 ### What is the average daily activity pattern?
 
@@ -188,7 +187,7 @@ plot(intervals$intervals, intervals$intervalMean, type = "l",
 
 ```r
 MaxMeanSteps <- intervals[which.max(intervals$intervalMean), ]
-head(MaxMeanSteps)
+head(MaxMeanSteps) #looking at the new DF
 ```
 
 ```
@@ -218,19 +217,17 @@ naVals <- sum(is.na(actdata$steps))
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
+**creating a new df where we will apply the interval_mean to any NA steps values**
 
 ```r
-#apply interval mean to na vals
 steps <- vector()
 for (i in 1:dim(actdata)[1]){
-    if (is.na(actdata$steps[i])){
+    if (is.na(actdata$steps[i])){ 
         steps <- c(steps, intervals$intervalMean[intervals$intervals == actdata$interval[i]])
-    } else {
-        steps <- c(steps, actdata$steps[i])
-    }
+    } else { steps <- c(steps, actdata$steps[i]) }
 }
 actDataNoNa <- data.frame(steps = steps, date = actdata$date, interval = actdata$interval)
-summary(actDataNoNa)
+summary(actDataNoNa) #looking at the new DF
 ```
 
 ```
@@ -245,7 +242,7 @@ summary(actDataNoNa)
 ```
 
 ```r
-str(actDataNoNa)
+str(actDataNoNa) #looking at the new DF
 ```
 
 ```
@@ -256,7 +253,7 @@ str(actDataNoNa)
 ```
 
 ```r
-head(actDataNoNa)
+head(actDataNoNa) #looking at the new DF
 ```
 
 ```
@@ -278,7 +275,7 @@ head(actDataNoNa)
 ```r
 noNaStepsPerDay <- aggregate(steps ~ date, actDataNoNa, sum)
 colnames(noNaStepsPerDay) <- c("date", "steps")
-head(noNaStepsPerDay)
+head(noNaStepsPerDay) #looking at the new DF
 ```
 
 ```
@@ -294,7 +291,7 @@ head(noNaStepsPerDay)
 
 ```r
 ggplot(noNaStepsPerDay, aes(x = steps)) +
-    geom_histogram(fill = 'cyan', binwidth = 500) +
+    geom_histogram(fill = 'purple', binwidth = 500) +
     labs(title="Steps Taken per Day", x = "Total daily Steps")
 ```
 
@@ -307,8 +304,8 @@ stepsMeanNoNa <- mean(noNaStepsPerDay$steps)
 stepsMedianNoNa <- median(noNaStepsPerDay$steps)
 ```
 
-The imputed **mean** total number of steps taken per day is 10766.189. 
-The imputed **median** total number of steps taken per day is 10766.189. 
+The imputed **mean** total number of steps taken per day is **10766.189**. 
+The imputed **median** total number of steps taken per day is **10766.189**. 
 
 **After imputing the data we get the same value for mean and median while prior to imputing they were slightly different.** 
 
@@ -321,50 +318,53 @@ the dataset with the filled-in missing values for this part.
 
 1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-1. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using **simulated data**:
-
-![Sample panel plot](instructions_fig/sample_panelplot.png) 
-
-
-**Your plot will look different from the one above** because you will
-be using the activity monitor data. Note that the above plot was made
-using the lattice system but you can make the same version of the plot
-using any plotting system you choose.
-
-
-## Submitting the Assignment
-
-To submit the assignment:
-
-1. Commit your completed `PA1_template.Rmd` file to the `master` branch of your git repository (you should already be on the `master` branch unless you created new ones)
-
-2. Commit your `PA1_template.md` and `PA1_template.html` files produced by processing your R markdown file with the `knit2html()` function in R (from the **knitr** package)
-
-3. If your document has figures included (it should) then they should have been placed in the `figure/` directory by default (unless you overrode the default). Add and commit the `figure/` directory to your git repository.
-
-4. Push your `master` branch to GitHub.
-
-5. Submit the URL to your GitHub repository for this assignment on the course web site.
-
-In addition to submitting the URL for your GitHub repository, you will
-need to submit the 40 character SHA-1 hash (as string of numbers from
-0-9 and letters from a-f) that identifies the repository commit that
-contains the version of the files you want to submit. You can do this
-in GitHub by doing the following:
-
-1. Go into your GitHub repository web page for this assignment
-
-2. Click on the "?? commits" link where ?? is the number of commits you have in the repository. For example, if you made a total of 10 commits to this repository, the link should say "10 commits".
-
-3. You will see a list of commits that you have made to this repository. The most recent commit is at the very top. If this represents the version of the files you want to submit, then just click the "copy to clipboard" button on the right hand side that should appear when you hover over the SHA-1 hash. Paste this SHA-1 hash into the course web site when you submit your assignment. If you don't want to use the most recent commit, then go down and find the commit you want and copy the SHA-1 hash.
-
-A valid submission will look something like (this is just an **example**!)
+**Taking the no NAs dataset, creating a new DF with dates replaced with weekend for Sat|Sun or weekday**
 
 ```r
-https://github.com/rdpeng/RepData_PeerAssessment1
-
-7c376cc5447f11537f8740af8e07d6facc3d9645
+dayType <- function(date) {
+    myday <- weekdays(date)
+    if (myday %in% c("Saturday", "Sunday"))
+        return("weekend") 
+    else 
+        return ("weekday")           
+}
+byDayTypeData <- actDataNoNa #copy to new DF
+byDayTypeData$date <- as.Date(byDayTypeData$date)  #making sure vals are dates so weekdays() will work
+byDayTypeData$date <- sapply(byDayTypeData$date, FUN = dayType)  #replace date with dayType 
+head(byDayTypeData) #looking at the new DF
 ```
+
+```
+##    steps    date interval
+## 1 1.7170 weekday        0
+## 2 0.3396 weekday        5
+## 3 0.1321 weekday       10
+## 4 0.1509 weekday       15
+## 5 0.0755 weekday       20
+## 6 2.0943 weekday       25
+```
+
+```r
+str(byDayTypeData)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date    : chr  "weekday" "weekday" "weekday" "weekday" ...
+##  $ interval: Factor w/ 288 levels "0","10","100",..: 1 226 2 73 136 195 198 209 212 223 ...
+```
+
+```r
+unique(byDayTypeData$date)  #checking the date values
+```
+
+```
+## [1] "weekday" "weekend"
+```
+
+
+1. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using **simulated data**:
 
 
 
